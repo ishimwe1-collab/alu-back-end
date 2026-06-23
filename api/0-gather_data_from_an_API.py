@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 """Fetch and display an employee's TODO list progress."""
 
 import requests
@@ -6,18 +7,22 @@ import sys
 
 
 if __name__ == "__main__":
-    employee_id = int(sys.argv[1])
+    employee_id = sys.argv[1]
 
     user = requests.get(
-        f"https://jsonplaceholder.typicode.com/users/{employee_id}"
+        "http://jsonplaceholder.typicode.com/users/{}".format(employee_id)
     ).json()
 
     todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos",
+        "http://jsonplaceholder.typicode.com/todos",
         params={"userId": employee_id}
     ).json()
 
-    completed_tasks = [task for task in todos if task.get("completed")]
+    completed_tasks = []
+
+    for task in todos:
+        if task.get("completed") is True:
+            completed_tasks.append(task)
 
     print(
         "Employee {} is done with tasks({}/{}):".format(
