@@ -1,63 +1,57 @@
-#!/usr/bin/python3
-<<<<<<< HEAD
-"""Gather data from an API."""
-=======
 
-"""Fetch and display an employee's TODO list progress."""
->>>>>>> 2b94313d19b5347d21b86848fdd40ffea50370c7
+#!/usr/bin/python3
+"""
+Fetch and display an employee's TODO list progress
+from https://jsonplaceholder.typicode.com
+"""
 
 import requests
 import sys
 
 
-if __name__ == "__main__":
-    employee_id = sys.argv[1]
-<<<<<<< HEAD
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python3 0-gather_data_from_an_API.py <employee_id>")
+        sys.exit(1)
 
-    user = requests.get(
-        "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
-    ).json()
+    try:
+        employee_id = int(sys.argv[1])
+    except ValueError:
+        print("Employee ID must be an integer")
+        sys.exit(1)
 
-    todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}".format(
-            employee_id
-        )
-    ).json()
+    base_url = "https://jsonplaceholder.typicode.com"
 
-    done_tasks = [task for task in todos if task.get("completed")]
-=======
+    # Fetch employee info
+    user_resp = requests.get(f"{base_url}/users/{employee_id}")
+    if user_resp.status_code != 200:
+        sys.exit(1)
 
-    user = requests.get(
-        "http://jsonplaceholder.typicode.com/users/{}".format(employee_id)
-    ).json()
+    user = user_resp.json()
+    employee_name = user.get("name")
 
-    todos = requests.get(
-        "http://jsonplaceholder.typicode.com/todos",
-        params={"userId": employee_id}
-    ).json()
+    # Fetch todos
+    todos_resp = requests.get(f"\
+    {base_url}/todos", params={"userId": employee_id})
 
-    completed_tasks = []
+    if todos_resp.status_code != 200:
+        sys.exit(1)
 
-    for task in todos:
-        if task.get("completed") is True:
-            completed_tasks.append(task)
->>>>>>> 2b94313d19b5347d21b86848fdd40ffea50370c7
+    todos = todos_resp.json()
 
+    total_tasks = len(todos)
+    completed_tasks = [t for t in todos if t.get("completed") is True]
+    done_tasks = len(completed_tasks)
+
+    # Output (EXACT format)
     print(
-        "Employee {} is done with tasks({}/{}):".format(
-            user.get("name"),
-<<<<<<< HEAD
-            len(done_tasks),
-=======
-            len(completed_tasks),
->>>>>>> 2b94313d19b5347d21b86848fdd40ffea50370c7
-            len(todos)
-        )
+        f"Employee {employee_name} is done "
+        f"with tasks({done_tasks}/{total_tasks}):"
     )
 
-<<<<<<< HEAD
-    for task in done_tasks:
-=======
     for task in completed_tasks:
->>>>>>> 2b94313d19b5347d21b86848fdd40ffea50370c7
-        print("\t {}".format(task.get("title")))
+        print(f"\t {task.get('title')}")
+
+
+if __name__ == "__main__":
+    main()
