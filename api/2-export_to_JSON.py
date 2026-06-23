@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 """Export employee TODO list to JSON."""
 
 import json
@@ -11,26 +10,26 @@ if __name__ == "__main__":
     employee_id = sys.argv[1]
 
     user = requests.get(
-        "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
+        "http://jsonplaceholder.typicode.com/users/{}".format(employee_id)
     ).json()
 
     todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos",
+        "http://jsonplaceholder.typicode.com/todos",
         params={"userId": employee_id}
     ).json()
 
-    tasks = []
+    task_list = []
 
     for task in todos:
-        tasks.append({
+        task_list.append({
             "task": task.get("title"),
             "completed": task.get("completed"),
             "username": user.get("username")
         })
 
-    data = {
-        employee_id: tasks
+    json_data = {
+        employee_id: task_list
     }
 
-    with open("{}.json".format(employee_id), "w") as json_file:
-        json.dump(data, json_file)
+    with open("{}.json".format(employee_id), "w") as f:
+        json.dump(json_data, f)
